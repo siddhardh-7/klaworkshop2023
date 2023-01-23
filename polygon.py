@@ -1,5 +1,10 @@
 import math
 
+'''
+Only changes you have to make for all milestones is Sourcefile path, POI file path , output file(milestoneX) path
+'''
+
+
 # opening the source file
 with open("D:\workshops\klaworkshop2023\Milestone_Input\Milestone 4\Source.txt", 'r') as f:
     data = f.read()
@@ -83,8 +88,17 @@ print("Source Data Class created")
 
 poi_instance = MyData(data_list= poi_data_list)
 poi_poly = poi_instance.ploygons
+poi_poly_tot_peri = 0
+poi_poly_tot_area = 0
+for per_temp in poi_poly:
+    poi_poly_tot_peri +=  per_temp.perimeter 
+    poi_poly_tot_area +=  per_temp.area
 print("POI Data Class created")
 
+def pol_similiar(p1_per , p2_per ,p1_area,p2_area):
+    if ((p1_per /p2_per)**2  == (p1_area/p2_area)) or (((p1_per /poi_poly_tot_peri)**2  == (p1_area/poi_poly_tot_area))):
+        return True
+    return False
 
 # writing it to output file
 f= open("milestone4.txt","w+")
@@ -112,7 +126,7 @@ for pol in data_instance.ploygons:
     
     if dulplicate is False:  
         for p_pol in poi_poly:
-            if p_pol.perimeter != 0 and p_pol.area != 0 and ((pol.perimeter /p_pol.perimeter)**2  == (pol.area/p_pol.area)):
+            if p_pol.perimeter != 0 and p_pol.area != 0 and pol_similiar(pol.perimeter,p_pol.perimeter,pol.area,p_pol.area):
                 f.write("boundary\n")
                 layer_str = "layer "+str(pol.layer) +"\n"
                 f.write(layer_str)
