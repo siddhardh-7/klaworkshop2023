@@ -1,28 +1,21 @@
-import math
-
 '''
 Only changes you have to make for all milestones is Sourcefile path, POI file path , output file(milestoneX) path
 '''
 
-
 # opening the source file
 with open("D:\workshops\klaworkshop2023\Milestone_Input\Milestone 4\Source.txt", 'r') as f:
     data = f.read()
-
 # Parse the data 
 sou_data_list = data.split('\n')
-# print(data_list)
 f.close()
 
 # opening the POI file
 with open("D:\workshops\klaworkshop2023\Milestone_Input\Milestone 4\POI.txt", 'r') as f:
     data = f.read()
-
 # Parse the data 
 poi_data_list = data.split('\n')
 # print(data_list)
 f.close()
-
 
 # class for the polygon
 class polygon:
@@ -82,21 +75,26 @@ class MyData():
                 xy_list = [] 
         return list
 
-# Create an instance of the class
+# Create an instance of the source class
 data_instance = MyData(data_list=sou_data_list)
-print("Source Data Class created")
+print("\nData Class created for Source file")
 
+# Create an instance of the POI class
 poi_instance = MyData(data_list= poi_data_list)
+print("Data Class created for POI")
 poi_poly = poi_instance.ploygons
 poi_poly_tot_peri = 0
 poi_poly_tot_area = 0
 for per_temp in poi_poly:
     poi_poly_tot_peri +=  per_temp.perimeter 
     poi_poly_tot_area +=  per_temp.area
-print("POI Data Class created")
+if poi_poly[0].layer != poi_poly[1].layer:
+    poi_poly_tot_peri = -1
+    poi_poly_tot_area = -1
 
+# checking if both the polygons are similiar or not
 def pol_similiar(p1_per , p2_per ,p1_area,p2_area):
-    if ((p1_per /p2_per)**2  == (p1_area/p2_area)) or (((p1_per /poi_poly_tot_peri)**2  == (p1_area/poi_poly_tot_area))):
+    if ((p1_per /p2_per)**2  == (p1_area/p2_area)) or ((p1_per /poi_poly_tot_peri)**2  == (p1_area/poi_poly_tot_area)):
         return True
     return False
 
@@ -117,8 +115,9 @@ for pol in data_instance.ploygons:
     dulp_str = ""
     
     for xy in pol.coordinates:
-        dulp_str = dulp_str+"".join(xy)
+        dulp_str = dulp_str + "".join(xy) + " "
     
+    # checking whether the polygon already present in the results polygon 
     if dulp_str in pol_set:
         dulplicate = True
     else :
@@ -144,4 +143,4 @@ for i in data_instance.footer:
      f.write("".join(i))
      f.write("\n")
 print("Data has been added to output file")
-
+f.close()
