@@ -1,10 +1,23 @@
-with open("D:\workshops\klaworkshop2023\Milestone_Input\Milestone 1\Format_Source.txt", 'r') as f:
+import math
+
+# opening the source file
+with open("D:\workshops\klaworkshop2023\Milestone_Input\Milestone 2\Source.txt", 'r') as f:
     data = f.read()
 
 # Parse the data 
-data_list = data.split('\n')
+sou_data_list = data.split('\n')
 # print(data_list)
 f.close()
+
+# opening the POI file
+with open("D:\workshops\klaworkshop2023\Milestone_Input\Milestone 2\POI.txt", 'r') as f:
+    data = f.read()
+
+# Parse the data 
+poi_data_list = data.split('\n')
+# print(data_list)
+f.close()
+
 
 # class for the polygon
 class polygon:
@@ -12,15 +25,32 @@ class polygon:
         self.layer = layer
         self.datatype = datatype
         self.coordinates = coordinates
+        self.perimeter = self.get_perimeter()
+        self.area = self.poly_area(x= [inner[0] for inner in coordinates] ,y = [inner[1] for inner in coordinates]  )
+    
+    def get_perimeter(self):
+        perimeter = 0.0
+        for i in range(len(self.coordinates)):
+            p1 = self.coordinates[i]
+            p2 = self.coordinates[i-1]
+            perimeter += ((int(p1[0])- int(p2[0]))**2+(int(p1[1]) - int(p2[1]))**2)**0.5
+        return perimeter
+    
+    # Calculate the area of the polygon
+    def poly_area(self,x, y):
+        area = 0.0
+        for i in range(-1, len(x)-1):
+            area += (int(x[i]) * int(y[i+1])) - (int(y[i])*int(x[i+1]))
+        return 0.5*abs(area)
 
 # Class for the data
 class MyData():
-    def __init__(self):
+    def __init__(self,data_list):
         self.header = data_list[:7]
-        self.ploygons = self.create_polygon()
+        self.ploygons = self.create_polygon(data_list)
         self.footer = data_list[-3:]
         
-    def create_polygon(self):
+    def create_polygon(self,data_list):
         list = []
         
         layer = ""
@@ -46,13 +76,21 @@ class MyData():
                 datatype = ""
                 xy_list = [] 
         return list
-            
 
 # Create an instance of the class
-data_instance = MyData()
-print("Data Class created")
+data_instance = MyData(data_list=sou_data_list)
+print("Source Data Class created")
+
+poi_instance = MyData(data_list= poi_data_list)
+poi_perimeter = poi_instance.ploygons[0].perimeter
+poi_area = poi_instance.ploygons[0].area
+print(poi_perimeter)
+print(poi_area)
+print("POI Data Class created")
+
+
 # writing it to output file
-f= open("milestone1.txt","w+")
+f= open("milestone2.txt","w+")
 
 # adding header
 for i in data_instance.header:
@@ -61,22 +99,19 @@ for i in data_instance.header:
 f.write("\n")
 
 # adding polygon
-count = 0
 for pol in data_instance.ploygons:
-    if count == 2:
-        break;
-    f.write("boundary\n")
-    layer_str = "layer "+str(pol.layer) +"\n"
-    f.write(layer_str)
-    datatype_str = "datatype "+str(pol.datatype) +"\n"
-    f.write(datatype_str)
-    xy_str = "xy  "+ str(len(pol.coordinates)) + "  "
-    for x in pol.coordinates:
-        xy_str  = xy_str + str(x[0]) + " "
-        xy_str  = xy_str + str(x[1]) + "  "
-    f.write(xy_str)
-    f.write("\nendel\n")
-    count += 1
+    if poi_perimeter != 0 and poi_area != 0 and ((pol.perimeter /poi_perimeter)**2  == (pol.area/poi_area)):
+        f.write("boundary\n")
+        layer_str = "layer "+str(pol.layer) +"\n"
+        f.write(layer_str)
+        datatype_str = "datatype "+str(pol.datatype) +"\n"
+        f.write(datatype_str)
+        xy_str = "xy  "+ str(len(pol.coordinates)) + "  "
+        for x in pol.coordinates:
+            xy_str  = xy_str + str(x[0]) + " "
+            xy_str  = xy_str + str(x[1]) + "  "
+        f.write(xy_str)
+        f.write("\nendel\n")
     
 # adding footer
 for i in data_instance.footer:
@@ -84,12 +119,3 @@ for i in data_instance.footer:
      f.write("\n")
 print("Data has been added to output file")
 
-def calculate_area(polygon):
-    n = len(polygon)
-    area = 0.0
-    for i in range(n):
-        j = (i + 1) % n
-        area += polygon[i][0] * polygon[j][1]
-        area -= polygon[j][0] * polygon[i][1]
-    area = abs(area) / 2.0
-    return area
