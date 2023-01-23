@@ -1,7 +1,7 @@
 import math
 
 # opening the source file
-with open("D:\workshops\klaworkshop2023\Milestone_Input\Milestone 5\Source.txt", 'r') as f:
+with open("D:\workshops\klaworkshop2023\Milestone_Input\Milestone 4\Source.txt", 'r') as f:
     data = f.read()
 
 # Parse the data 
@@ -10,7 +10,7 @@ sou_data_list = data.split('\n')
 f.close()
 
 # opening the POI file
-with open("D:\workshops\klaworkshop2023\Milestone_Input\Milestone 5\POI.txt", 'r') as f:
+with open("D:\workshops\klaworkshop2023\Milestone_Input\Milestone 4\POI.txt", 'r') as f:
     data = f.read()
 
 # Parse the data 
@@ -87,7 +87,7 @@ print("POI Data Class created")
 
 
 # writing it to output file
-f= open("milestone5.txt","w+")
+f= open("milestone4.txt","w+")
 
 # adding header
 for i in data_instance.header:
@@ -95,21 +95,35 @@ for i in data_instance.header:
      f.write("\n")
 f.write("\n")
 
+pol_set = set()
+
 # adding polygon
 for pol in data_instance.ploygons:
-    for p_pol in poi_poly:
-        if p_pol.perimeter != 0 and p_pol.area != 0 and ((pol.perimeter /p_pol.perimeter)**2  == (pol.area/p_pol.area)):
-            f.write("boundary\n")
-            layer_str = "layer "+str(pol.layer) +"\n"
-            f.write(layer_str)
-            datatype_str = "datatype "+str(pol.datatype) +"\n"
-            f.write(datatype_str)
-            xy_str = "xy  "+ str(len(pol.coordinates)) + "  "
-            for x in pol.coordinates:
-                xy_str  = xy_str + str(x[0]) + " "
-                xy_str  = xy_str + str(x[1]) + "  "
-            f.write(xy_str)
-            f.write("\nendel\n")
+    dulplicate = False
+    dulp_str = ""
+    
+    for xy in pol.coordinates:
+        dulp_str = dulp_str+"".join(xy)
+    
+    if dulp_str in pol_set:
+        dulplicate = True
+    else :
+        pol_set.add(dulp_str)
+    
+    if dulplicate is False:  
+        for p_pol in poi_poly:
+            if p_pol.perimeter != 0 and p_pol.area != 0 and ((pol.perimeter /p_pol.perimeter)**2  == (pol.area/p_pol.area)):
+                f.write("boundary\n")
+                layer_str = "layer "+str(pol.layer) +"\n"
+                f.write(layer_str)
+                datatype_str = "datatype "+str(pol.datatype) +"\n"
+                f.write(datatype_str)
+                xy_str = "xy  "+ str(len(pol.coordinates)) + "  "
+                for x in pol.coordinates:
+                    xy_str  = xy_str + str(x[0]) + " "
+                    xy_str  = xy_str + str(x[1]) + "  "
+                f.write(xy_str)
+                f.write("\nendel\n")
     
 # adding footer
 for i in data_instance.footer:
