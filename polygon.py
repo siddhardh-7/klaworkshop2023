@@ -88,14 +88,15 @@ poi_poly_tot_area = 0
 for per_temp in poi_poly:
     poi_poly_tot_peri +=  per_temp.perimeter 
     poi_poly_tot_area +=  per_temp.area
-if poi_poly[0].layer != poi_poly[1].layer:
+if len(poi_poly) > 1 and poi_poly[0].layer != poi_poly[1].layer:
     poi_poly_tot_peri = -1
     poi_poly_tot_area = -1
 
 # checking if both the polygons are similiar or not
-def pol_similiar(p1_per , p2_per ,p1_area,p2_area):
-    if ((p1_per /p2_per)**2  == (p1_area/p2_area)) or ((p1_per /poi_poly_tot_peri)**2  == (p1_area/poi_poly_tot_area)):
-        return True
+def pol_similiar(p1_per ,p1_area):
+    for p_pol in poi_poly:
+        if p_pol.perimeter > 0 and p_pol.area > 0 and ((p1_per /p_pol.perimeter)**2  == (p1_area/p_pol.area)) or ((p1_per /poi_poly_tot_peri)**2  == (p1_area/poi_poly_tot_area)):
+            return True
     return False
 
 # writing it to output file
@@ -123,20 +124,18 @@ for pol in data_instance.ploygons:
     else :
         pol_set.add(dulp_str)
     
-    if dulplicate is False:  
-        for p_pol in poi_poly:
-            if p_pol.perimeter != 0 and p_pol.area != 0 and pol_similiar(pol.perimeter,p_pol.perimeter,pol.area,p_pol.area):
-                f.write("boundary\n")
-                layer_str = "layer "+str(pol.layer) +"\n"
-                f.write(layer_str)
-                datatype_str = "datatype "+str(pol.datatype) +"\n"
-                f.write(datatype_str)
-                xy_str = "xy  "+ str(len(pol.coordinates)) + "  "
-                for x in pol.coordinates:
-                    xy_str  = xy_str + str(x[0]) + " "
-                    xy_str  = xy_str + str(x[1]) + "  "
-                f.write(xy_str)
-                f.write("\nendel\n")
+    if dulplicate is False and pol_similiar(pol.perimeter,pol.area):
+        f.write("boundary\n")
+        layer_str = "layer "+str(pol.layer) +"\n"
+        f.write(layer_str)
+        datatype_str = "datatype "+str(pol.datatype) +"\n"
+        f.write(datatype_str)
+        xy_str = "xy  "+ str(len(pol.coordinates)) + "  "
+        for x in pol.coordinates:
+            xy_str  = xy_str + str(x[0]) + " "
+            xy_str  = xy_str + str(x[1]) + "  "
+        f.write(xy_str)
+        f.write("\nendel\n")
     
 # adding footer
 for i in data_instance.footer:
