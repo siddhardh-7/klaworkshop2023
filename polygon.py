@@ -61,21 +61,35 @@ for i in data_instance.header:
 f.write("\n")
 
 # adding polygon
+count = 0
 for pol in data_instance.ploygons:
+    if count == 2:
+        break;
     f.write("boundary\n")
     layer_str = "layer "+str(pol.layer) +"\n"
     f.write(layer_str)
     datatype_str = "datatype "+str(pol.datatype) +"\n"
     f.write(datatype_str)
-    xy_str = "xy "+ str(len(pol.coordinates)) + " "
+    xy_str = "xy  "+ str(len(pol.coordinates)) + "  "
     for x in pol.coordinates:
         xy_str  = xy_str + str(x[0]) + " "
-        xy_str  = xy_str + str(x[1]) + " "
+        xy_str  = xy_str + str(x[1]) + "  "
     f.write(xy_str)
     f.write("\nendel\n")
+    count += 1
     
 # adding footer
 for i in data_instance.footer:
      f.write("".join(i))
      f.write("\n")
 print("Data has been added to output file")
+
+def calculate_area(polygon):
+    n = len(polygon)
+    area = 0.0
+    for i in range(n):
+        j = (i + 1) % n
+        area += polygon[i][0] * polygon[j][1]
+        area -= polygon[j][0] * polygon[i][1]
+    area = abs(area) / 2.0
+    return area
