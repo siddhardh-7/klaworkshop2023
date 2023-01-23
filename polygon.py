@@ -1,7 +1,7 @@
 import math
 
 # opening the source file
-with open("D:\workshops\klaworkshop2023\Milestone_Input\Milestone 2\Source.txt", 'r') as f:
+with open("D:\workshops\klaworkshop2023\Milestone_Input\Milestone 3\Source.txt", 'r') as f:
     data = f.read()
 
 # Parse the data 
@@ -10,7 +10,7 @@ sou_data_list = data.split('\n')
 f.close()
 
 # opening the POI file
-with open("D:\workshops\klaworkshop2023\Milestone_Input\Milestone 2\POI.txt", 'r') as f:
+with open("D:\workshops\klaworkshop2023\Milestone_Input\Milestone 3\POI.txt", 'r') as f:
     data = f.read()
 
 # Parse the data 
@@ -84,13 +84,11 @@ print("Source Data Class created")
 poi_instance = MyData(data_list= poi_data_list)
 poi_perimeter = poi_instance.ploygons[0].perimeter
 poi_area = poi_instance.ploygons[0].area
-print(poi_perimeter)
-print(poi_area)
 print("POI Data Class created")
 
 
 # writing it to output file
-f= open("milestone2.txt","w+")
+f= open("milestone3.txt","w+")
 
 # adding header
 for i in data_instance.header:
