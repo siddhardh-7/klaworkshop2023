@@ -4,6 +4,7 @@ with open("D:\workshops\klaworkshop2023\Milestone_Input\Milestone 1\Format_Sourc
 # Parse the data 
 data_list = data.split('\n')
 # print(data_list)
+f.close()
 
 # class for the polygon
 class polygon:
@@ -12,12 +13,12 @@ class polygon:
         self.datatype = datatype
         self.coordinates = coordinates
 
-# Create a class for the data
+# Class for the data
 class MyData():
     def __init__(self):
         self.header = data_list[:7]
         self.ploygons = self.create_polygon()
-        self.footer = data_list[-2:]
+        self.footer = data_list[-3:]
         
     def create_polygon(self):
         list = []
@@ -49,6 +50,32 @@ class MyData():
 
 # Create an instance of the class
 data_instance = MyData()
+print("Data Class created")
+# writing it to output file
+f= open("milestone1.txt","w+")
 
-ploy = data_instance.ploygons
-print(ploy[0].coordinates)
+# adding header
+for i in data_instance.header:
+     f.write("".join(i))
+     f.write("\n")
+f.write("\n")
+
+# adding polygon
+for pol in data_instance.ploygons:
+    f.write("boundary\n")
+    layer_str = "layer "+str(pol.layer) +"\n"
+    f.write(layer_str)
+    datatype_str = "datatype "+str(pol.datatype) +"\n"
+    f.write(datatype_str)
+    xy_str = "xy "+ str(len(pol.coordinates)) + " "
+    for x in pol.coordinates:
+        xy_str  = xy_str + str(x[0]) + " "
+        xy_str  = xy_str + str(x[1]) + " "
+    f.write(xy_str)
+    f.write("\nendel\n")
+    
+# adding footer
+for i in data_instance.footer:
+     f.write("".join(i))
+     f.write("\n")
+print("Data has been added to output file")
