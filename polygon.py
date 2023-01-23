@@ -110,6 +110,7 @@ f.write("\n")
 
 pol_set = set()
 
+print("\nFinding Similiar polygons......")
 # adding polygon
 for pol in data_instance.ploygons:
     dulplicate = False
@@ -141,5 +142,5 @@ for pol in data_instance.ploygons:
 for i in data_instance.footer:
      f.write("".join(i))
      f.write("\n")
-print("Data has been added to output file")
+print("Ploygons found\nData has been added to output file")
 f.close()
